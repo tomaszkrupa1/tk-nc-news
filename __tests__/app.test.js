@@ -3,7 +3,6 @@ const app = require("../app");
 const db = require("../db/connection");
 const seed = require("../db/seeds/seed");
 const data = require("../db/data/test-data");
-const articles = require("../db/data/test-data/articles");
 
 afterAll(() => {
   if (db.end) db.end();
@@ -68,5 +67,49 @@ describe("2. GET /api/articles", () => {
           })
         ).toBe(true);
       });
+  });
+});
+
+describe("3. GET /api/articles/:article_id", () => {
+  it("200: should respond with the article object containing the corresponding article_id", () => {
+    const articleId = 1;
+    return request(app)
+      .get(`/api/articles/${articleId}`)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.article).toEqual(
+          expect.objectContaining({
+            article_id: articleId,
+            title: "Living in the shadow of a great man",
+            author: "butter_bridge",
+            body: "I find this existence challenging",
+            topic: "mitch",
+            created_at: "2020-07-09T20:11:00.000Z",
+            votes: 100,
+          })
+        );
+      });
+  });
+
+  describe("Errors", () => {
+    it("404: Should return a Not Found error when endpoint doesn't exist with the provided ID", () => {
+      return request(app)
+        .get("/api/articles/999999")
+        .expect(404)
+        .then((res) => {
+          const body = res.body;
+          expect(body).toEqual({ message: "Not Found" });
+        });
+    });
+
+    it("400: Should return a 400 Bad Request error when endpoint provided an id that is the wrong data type", () => {
+      return request(app)
+        .get("/api/articles/shouldthrowbadrequest")
+        .expect(400)
+        .then((res) => {
+          const body = res.body;
+          expect(body).toEqual({ message: "Bad Request" });
+        });
+    });
   });
 });

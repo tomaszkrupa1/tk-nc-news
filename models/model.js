@@ -15,3 +15,22 @@ exports.selectArticles = () => {
       return articles;
     });
 };
+
+exports.selectArticleById = (id) => {
+  console.log("inthemodel");
+  return db
+    .query("SELECT * FROM articles WHERE article_id = $1;", [id])
+    .then(({ rows }) => {
+      return rows[0];
+    })
+    .then((article) => {
+      if (article === undefined) {
+        return Promise.reject({
+          status: 404,
+          msg: "Not Found",
+        });
+      } else {
+        return article;
+      }
+    });
+};

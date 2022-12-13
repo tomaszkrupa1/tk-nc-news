@@ -48,7 +48,7 @@ describe("2. GET /api/articles", () => {
               topic: expect.any(String),
               created_at: expect.any(String),
               votes: expect.any(Number),
-              comment_count: expect.any(String),
+              comment_count: expect.any(Number),
             })
           );
         });
@@ -67,17 +67,6 @@ describe("2. GET /api/articles", () => {
             );
           })
         ).toBe(true);
-      });
-  });
-  it("200: should return the correct amount of comments for each article", () => {
-    return request(app)
-      .get("/api/articles")
-      .expect(200)
-      .then(({ body: articles }) => {
-        const articlesArr = articles.articles;
-        expect(articlesArr[0].comment_count).toBe("2");
-        expect(articlesArr[1].comment_count).toBe("1");
-        expect(articlesArr[11].comment_count).toBe("0");
       });
   });
 });

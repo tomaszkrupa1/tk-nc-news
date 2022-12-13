@@ -17,7 +17,6 @@ exports.selectArticles = () => {
 };
 
 exports.selectArticleById = (id) => {
-  console.log("inthemodel");
   return db
     .query("SELECT * FROM articles WHERE article_id = $1;", [id])
     .then(({ rows }) => {

@@ -17,7 +17,6 @@ exports.getArticles = (req, res) => {
 };
 
 exports.getArticleById = (req, res, next) => {
-  console.log("in the controller");
   const id = req.params.article_id;
   selectArticleById(id)
     .then((article) => {

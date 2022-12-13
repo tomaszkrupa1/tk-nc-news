@@ -19,8 +19,8 @@ exports.selectArticles = () => {
 exports.selectArticleById = (id) => {
   return db
     .query("SELECT * FROM articles WHERE article_id = $1;", [id])
-    .then(({ rows }) => {
-      return rows[0];
+    .then(({ rows: article }) => {
+      return article[0];
     })
     .then((article) => {
       if (article === undefined) {

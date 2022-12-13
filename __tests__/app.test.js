@@ -77,15 +77,17 @@ describe("3. GET /api/articles/:article_id", () => {
       .get(`/api/articles/${articleId}`)
       .expect(200)
       .then(({ body }) => {
-        expect(body.article).toEqual({
-          article_id: articleId,
-          title: "Living in the shadow of a great man",
-          author: "butter_bridge",
-          body: "I find this existence challenging",
-          topic: "mitch",
-          created_at: "2020-07-09T20:11:00.000Z",
-          votes: 100,
-        });
+        expect(body.article).toEqual(
+          expect.objectContaining({
+            article_id: articleId,
+            title: "Living in the shadow of a great man",
+            author: "butter_bridge",
+            body: "I find this existence challenging",
+            topic: "mitch",
+            created_at: "2020-07-09T20:11:00.000Z",
+            votes: 100,
+          })
+        );
       });
   });
 

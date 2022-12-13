@@ -3,6 +3,7 @@ const app = require("../app");
 const db = require("../db/connection");
 const seed = require("../db/seeds/seed");
 const data = require("../db/data/test-data");
+const articles = require("../db/data/test-data/articles");
 
 afterAll(() => {
   if (db.end) db.end();
@@ -11,7 +12,7 @@ afterAll(() => {
 beforeEach(() => seed(data));
 
 describe("1. GET /api/topics", () => {
-  test("status:200, responds with an array of topic objects", () => {
+  test("200: should respond with an array of topic objects", () => {
     return request(app)
       .get("/api/topics")
       .expect(200)
@@ -26,6 +27,57 @@ describe("1. GET /api/topics", () => {
             })
           );
         });
+      });
+  });
+});
+
+describe("2. GET /api/articles", () => {
+  test("200: should respond with an array of article objects", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body: articles }) => {
+        const articlesArr = articles.articles;
+        expect(articlesArr).toHaveLength(12);
+        articlesArr.forEach((article) => {
+          expect(article).toEqual(
+            expect.objectContaining({
+              author: expect.any(String),
+              title: expect.any(String),
+              article_id: expect.any(Number),
+              topic: expect.any(String),
+              created_at: expect.any(String),
+              votes: expect.any(Number),
+              comment_count: expect.any(String),
+            })
+          );
+        });
+      });
+  });
+  it("200: should return articles sorted by date descending order by default", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(
+          articles.every((article, index) => {
+            return (
+              index === 0 ||
+              article.created_at <= articles[index - 1].created_at
+            );
+          })
+        ).toBe(true);
+      });
+  });
+  it("200: should return the correct amount of comments for each article", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body: articles }) => {
+        const articlesArr = articles.articles;
+        expect(articlesArr[0].comment_count).toBe("2");
+        expect(articlesArr[1].comment_count).toBe("1");
+        expect(articlesArr[11].comment_count).toBe("0");
       });
   });
 });

@@ -113,3 +113,59 @@ describe("3. GET /api/articles/:article_id", () => {
     });
   });
 });
+
+describe("4. GET /api/articles/:article_id/comments", () => {
+  it("200: should respond with an empty array when there are no comments on the article", () => {
+    const articleId = 7;
+    return request(app)
+      .get(`/api/articles/${articleId}/comments`)
+      .expect(200)
+      .then(({ body: comments }) => {
+        const commentsArr = comments.comments;
+        expect(commentsArr).toEqual([]);
+      });
+  });
+});
+
+it("200: should respond with the comment object containing the corresponding comments to the article_id", () => {
+  const articleId = 1;
+  return request(app)
+    .get(`/api/articles/${articleId}/comments`)
+    .expect(200)
+    .then(({ body: comments }) => {
+      const commentsArr = comments.comments;
+      commentsArr.forEach((comment) => {
+        expect(comment).toEqual(
+          expect.objectContaining({
+            comment_id: expect.any(Number),
+            author: expect.any(String),
+            body: expect.any(String),
+            created_at: expect.any(String),
+            votes: expect.any(Number),
+          })
+        );
+      });
+    });
+});
+
+describe("Errors", () => {
+  it.only("404: Should return a Not Found error when endpoint doesn't exist with the provided ID", () => {
+    return request(app)
+      .get("/api/articles/999999/comments")
+      .expect(404)
+      .then((res) => {
+        const body = res.body;
+        expect(body).toEqual({ message: "Not Found" });
+      });
+  });
+
+  it("400: Should return a 400 Bad Request error when endpoint provided an id that is the wrong data type", () => {
+    return request(app)
+      .get("/api/articles/shouldthrowbadrequest/comments")
+      .expect(400)
+      .then((res) => {
+        const body = res.body;
+        expect(body).toEqual({ message: "Bad Request" });
+      });
+  });
+});

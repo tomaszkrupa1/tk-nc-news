@@ -349,7 +349,7 @@ describe("6. PATCH /api/articles/:article_id", () => {
           });
       });
 
-      it("404: Should return Bad Request message when ID provided is the wrong data type", () => {
+      it("400: Should return Bad Request message when ID provided is the wrong data type", () => {
         return request(app)
           .patch("/api/articles/shouldthrowbadrequest")
           .expect(400)

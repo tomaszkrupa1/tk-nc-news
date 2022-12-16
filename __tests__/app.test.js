@@ -194,6 +194,30 @@ describe("5. POST /api/articles/:article_id/comments", () => {
         );
       });
   });
+  it("201: Should ignore unecessary properties in requestBody that are not username or body", () => {
+    const requestBody = {
+      username: "butter_bridge",
+      body: "I buttered a butter bridge",
+      uncessary: "ignore me",
+    };
+    return request(app)
+      .post("/api/articles/5/comments")
+      .send(requestBody)
+      .expect(201)
+      .then((res) => {
+        const postedComment = res.body.comment;
+        expect(postedComment).toEqual(
+          expect.objectContaining({
+            comment_id: expect.any(Number),
+            body: expect.any(String),
+            article_id: expect.any(Number),
+            author: expect.any(String),
+            votes: expect.any(Number),
+            created_at: expect.any(String),
+          })
+        );
+      });
+  });
 
   describe("Errors", () => {
     describe("ID Errors", () => {

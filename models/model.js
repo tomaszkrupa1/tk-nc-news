@@ -72,3 +72,21 @@ exports.insertCommentByArticleId = (id, usernameAndBody) => {
     return comment;
   });
 };
+
+exports.updateArticleVotes = (id, votesObj) => {
+  const updateQuery =
+    "UPDATE articles SET votes=votes+ $2 WHERE article_id = $1 RETURNING *;";
+  const params = [id, votesObj.inc_votes];
+
+  return db.query(updateQuery, params).then(({ rows: article }) => {
+    if (article.length === 0) {
+      return Promise.reject({
+        status: 404,
+        message: "Not Found",
+      });
+    } else {
+      const firstArticle = article[0];
+      return firstArticle;
+    }
+  });
+};

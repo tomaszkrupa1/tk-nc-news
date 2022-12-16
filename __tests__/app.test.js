@@ -292,3 +292,98 @@ describe("5. POST /api/articles/:article_id/comments", () => {
     });
   });
 });
+
+describe("6. PATCH /api/articles/:article_id", () => {
+  it("200: Should respond with an updated article", () => {
+    return request(app)
+      .patch("/api/articles/1")
+      .send({ inc_votes: 5 })
+      .expect(200)
+      .then((res) => {
+        const updatedArticle = res.body.article;
+        expect(updatedArticle).toEqual(
+          expect.objectContaining({
+            article_id: expect.any(Number),
+            title: expect.any(String),
+            topic: expect.any(String),
+            author: expect.any(String),
+            body: expect.any(String),
+            created_at: expect.any(String),
+            votes: expect.any(Number),
+          })
+        );
+      });
+  });
+
+  it("200: Should respond with a an updated article when passed a negative inc_votes value", () => {
+    return request(app)
+      .patch("/api/articles/2")
+      .send({ inc_votes: -5 })
+      .expect(200)
+      .then((res) => {
+        const updatedArticle = res.body.article;
+        expect(updatedArticle).toEqual(
+          expect.objectContaining({
+            article_id: expect.any(Number),
+            title: expect.any(String),
+            topic: expect.any(String),
+            author: expect.any(String),
+            body: expect.any(String),
+            created_at: expect.any(String),
+            votes: expect.any(Number),
+          })
+        );
+      });
+  });
+
+  describe("Errors", () => {
+    describe("ID Errors", () => {
+      it("404: Should return when the endpoint ID does not exist", () => {
+        return request(app)
+          .patch("/api/articles/999999")
+          .send({ inc_votes: 5 })
+          .expect(404)
+          .then((res) => {
+            const body = res.body;
+            expect(body).toEqual({ message: "Not Found" });
+          });
+      });
+
+      it("400: Should return Bad Request message when ID provided is the wrong data type", () => {
+        return request(app)
+          .patch("/api/articles/shouldthrowbadrequest")
+          .expect(400)
+          .then((res) => {
+            const body = res.body;
+            expect(body).toEqual({ message: "Bad Request" });
+          });
+      });
+    });
+
+    describe("PATCH errors", () => {
+      it("400: Should respond with a Bad Request message when sent a object with a malformed body", () => {
+        const requestBody = {};
+        return request(app)
+          .patch("/api/articles/2")
+          .send(requestBody)
+          .expect(400)
+          .then((res) => {
+            const body = res.body;
+            expect(body).toEqual({ message: "Bad Request" });
+          });
+      });
+
+      it("400: Should respond with a Bad Request message when passed a comment object with an incorrect data type", () => {
+        const requestBody = { inc_votes: "incorrect data type" };
+        return request(app)
+          .patch("/api/articles/2")
+          .send(requestBody)
+          .expect(400)
+          .then((res) => {
+            const body = res.body;
+            expect(body).toEqual({ message: "Bad Request" });
+          });
+      });
+    });
+  });
+});

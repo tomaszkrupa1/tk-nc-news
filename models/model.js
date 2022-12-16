@@ -26,10 +26,31 @@ exports.selectArticleById = (id) => {
       if (article === undefined) {
         return Promise.reject({
           status: 404,
-          msg: "Not Found",
+          message: "Not Found",
         });
       } else {
         return article;
       }
+    });
+};
+
+exports.selectCommentsByArticleId = (id) => {
+  return db
+    .query("SELECT * FROM articles WHERE article_id = $1;", [id])
+    .then(({ rows: articles }) => {
+      if (articles.length === 0) {
+        return Promise.reject({
+          status: 404,
+          message: "Non Existent ID",
+        });
+      } else {
+        return db.query(
+          "SELECT comment_id, body, votes, author, created_at FROM comments WHERE article_id = $1 ORDER BY created_at DESC;",
+          [id]
+        );
+      }
+    })
+    .then(({ rows: comments }) => {
+      return comments;
     });
 };

@@ -170,7 +170,7 @@ describe("Errors", () => {
   });
 });
 
-describe.only("5. POST /api/articles/:article_id/comments", () => {
+describe("5. POST /api/articles/:article_id/comments", () => {
   it("201: Should respond with the created row", () => {
     const requestBody = {
       username: "butter_bridge",
@@ -211,7 +211,7 @@ describe.only("5. POST /api/articles/:article_id/comments", () => {
             expect(body).toEqual({ message: "Not Found" });
           });
       });
-      
+
       it("400: Should return a Bad Request error when endpoint provided an ID that is the incorrect data type", () => {
         return request(app)
           .post("/api/articles/thisshouldcausea400errormessage/comments")

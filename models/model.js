@@ -54,3 +54,21 @@ exports.selectCommentsByArticleId = (id) => {
       return comments;
     });
 };
+
+exports.insertCommentByArticleId = (id, usernameAndBody) => {
+  const insertQuery =
+    "INSERT INTO comments (article_id, author, body) VALUES ($1, $2, $3) RETURNING *;";
+  const { username, body } = usernameAndBody;
+  const params = [id, username, body];
+
+  return db.query(insertQuery, params).then(({ rows }) => {
+    if (typeof body !== "string") {
+      return Promise.reject({
+        status: 400,
+        message: "Bad Request",
+      });
+    }
+    const comment = rows[0];
+    return comment;
+  });
+};

@@ -149,13 +149,13 @@ it("200: should respond with the comment object containing the corresponding com
 });
 
 describe("Errors", () => {
-  it.only("404: Should return a Not Found error when endpoint doesn't exist with the provided ID", () => {
+  it("404: Should return a Not Found error when endpoint doesn't exist with the provided ID", () => {
     return request(app)
       .get("/api/articles/999999/comments")
       .expect(404)
       .then((res) => {
         const body = res.body;
-        expect(body).toEqual({ message: "Not Found" });
+        expect(body).toEqual({ message: "Non Existent ID" });
       });
   });
 

@@ -15,6 +15,10 @@ app.get("/api/articles/:article_id", getArticleById);
 
 app.get("/api/articles/:article_id/comments", getCommentsByArticleId);
 
+app.all("/*", (req, res) => {
+  res.status(404).send({ message: "Not Found" });
+});
+
 app.use((err, req, res, next) => {
   if (err.code === "22P02") {
     res.status(400).send({ message: "Bad Request" });
@@ -25,7 +29,7 @@ app.use((err, req, res, next) => {
 
 app.use((err, req, res, next) => {
   if ("status" in err) {
-    res.status(err.status).send({ message: err.msg });
+    res.status(err.status).send({ message: err.message });
     return;
   } else {
     next(err);

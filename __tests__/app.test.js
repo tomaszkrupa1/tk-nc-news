@@ -387,3 +387,116 @@ describe("6. PATCH /api/articles/:article_id", () => {
     });
   });
 });
+
+describe("7. GET /api/users", () => {
+  it("200: Should respond with an array of user objects, including properties username, name and avatar_url", () => {
+    return request(app)
+      .get("/api/users")
+      .expect(200)
+      .then(({ body: users }) => {
+        const usersArr = users.users;
+        expect(usersArr).toHaveLength(4);
+        usersArr.forEach((user) => {
+          expect(user).toEqual(
+            expect.objectContaining({
+              username: expect.any(String),
+              name: expect.any(String),
+              avatar_url: expect.any(String),
+            })
+          );
+        });
+      });
+  });
+});
+
+describe("8. GET /api/articles (queries)", () => {
+  it("200: Should respond with an array with only articles with the topic provided", () => {
+    return request(app)
+      .get("/api/articles?topic=mitch")
+      .expect(200)
+      .then(({ body: articles }) => {
+        const articlesArr = articles.articles;
+        expect(articlesArr).toHaveLength(11);
+        articlesArr.forEach((article) => {
+          expect(article).toEqual(
+            expect.objectContaining({
+              article_id: expect.any(Number),
+              title: expect.any(String),
+              topic: expect.any(String),
+              author: expect.any(String),
+              body: expect.any(String),
+              created_at: expect.any(String),
+              votes: expect.any(Number),
+              comment_count: expect.any(Number),
+            })
+          );
+          expect(article.topic).toBe("mitch");
+        });
+      });
+  });
+  it("200: Should respond with an array sorted by the column provided in the query in descending order by default", () => {
+    return request(app)
+      .get("/api/articles?topic=mitch&sort_by=article_id")
+      .expect(200)
+      .then(({ body: articles }) => {
+        const articlesArr = articles.articles;
+        expect(
+          articlesArr.every((article, index) => {
+            return (
+              index === 0 ||
+              article.article_id <= articlesArr[index - 1].article_id
+            );
+          })
+        ).toBe(true);
+      });
+  });
+
+  it("200: Should respond with an array sorted by the column provided in the query in the order provided (asc)", () => {
+    return request(app)
+      .get("/api/articles?topic=mitch&sort_by=article_id&order=asc")
+      .expect(200)
+      .then(({ body: articles }) => {
+        const articlesArr = articles.articles;
+        expect(
+          articlesArr.every((article, index) => {
+            return (
+              index === 0 ||
+              article.article_id >= articlesArr[index - 1].article_id
+            );
+          })
+        ).toBe(true);
+      });
+  });
+
+  describe("Errors", () => {
+    it("400: Should return a 400 Invalid topic Query error when passed a topic doesnt exist", () => {
+      return request(app)
+        .get("/api/articles?topic=thisisaninvalidtopic")
+        .expect(400)
+        .then((res) => {
+          const body = res.body;
+          expect(body).toEqual({ message: "Invalid topic Query" });
+        });
+    });
+
+    it("400: Should return an error when an invalid sort_by Query error when passed an invalid sort_by column", () => {
+      return request(app)
+        .get("/api/articles?sort_by=thisisaninvalidsort")
+        .expect(400)
+        .then((res) => {
+          const body = res.body;
+          expect(body).toEqual({ message: "Invalid sort_by Query" });
+        });
+    });
+
+    it("400: Should return an Invalid order Query error when passed an invalid order", () => {
+      return request(app)
+        .get("/api/articles?order=DROP nc_news_test")
+        .expect(400)
+        .then((res) => {
+          const body = res.body;
+          expect(body).toEqual({ message: "Invalid order Query" });
+        });
+    });
+  });
+});

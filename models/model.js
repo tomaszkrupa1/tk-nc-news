@@ -90,3 +90,43 @@ exports.updateArticleVotes = (id, votesObj) => {
     }
   });
 };
+
+exports.selectUsers = () => {
+  return db.query("SELECT * FROM users;").then(({ rows }) => {
+    return rows;
+  });
+};
+
+exports.selectArticles = (topic, sort_by = "created_at", order = "DESC") => {
+  if (!["asc", "desc", "ASC", "DESC"].includes(order)) {
+    return Promise.reject({ status: 400, message: "Invalid order Query" });
+  }
+  if (
+    !["article_id", "created_at", "votes", "comment_count"].includes(sort_by)
+  ) {
+    return Promise.reject({ status: 400, message: "Invalid sort_by Query" });
+  }
+  return db
+    .query("SELECT slug FROM topics;")
+    .then(({ rows }) => {
+      const topicSlugs = [undefined];
+      rows.forEach((topic) => topicSlugs.push(topic.slug));
+      if (!topicSlugs.includes(topic)) {
+        return Promise.reject({ status: 400, message: "Invalid topic Query" });
+      }
+      return rows[0];
+    })
+    .then(() => {
+      let articleQuery;
+      if (!topic) {
+        articleQuery = `SELECT articles.*, CAST(COUNT(comments.article_id) AS INT) AS comment_count     FROM articles      LEFT JOIN comments       ON articles.article_id = comments.article_id      GROUP BY articles.article_id       ORDER BY ${sort_by} ${order};`;
+      } else {
+        articleQuery = `SELECT articles.*, CAST(COUNT(comments.article_id) AS INT) AS comment_count     FROM articles      LEFT JOIN comments       ON articles.article_id = comments.article_id   WHERE  topic = '${topic}' GROUP BY articles.article_id       ORDER BY ${sort_by} ${order};`;
+      }
+
+      return db.query(articleQuery);
+    })
+    .then(({ rows }) => {
+      return rows;
+    });
+};

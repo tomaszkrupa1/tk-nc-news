@@ -18,9 +18,17 @@ exports.selectArticles = () => {
 
 exports.selectArticleById = (id) => {
   return db
-    .query("SELECT * FROM articles WHERE article_id = $1;", [id])
-    .then(({ rows: article }) => {
-      return article[0];
+    .query(
+      "SELECT articles.*, CAST(COUNT(comments.article_id) AS INT) AS comment_count " +
+        "FROM articles " +
+        "LEFT JOIN comments " +
+        "ON articles.article_id = comments.article_id " +
+        "WHERE articles.article_id = $1 " +
+        "GROUP BY articles.article_id ",
+      [id]
+    )
+    .then(({ rows }) => {
+      return rows[0];
     })
     .then((article) => {
       if (article === undefined) {
@@ -128,5 +136,31 @@ exports.selectArticles = (topic, sort_by = "created_at", order = "DESC") => {
     })
     .then(({ rows }) => {
       return rows;
+    });
+};
+
+exports.selectCommentCountByArticleId = () => {
+  return db
+    .query(
+      `
+    SELECT articles.*, CAST(COUNT(comments.article_id) AS INT) AS comment_count     FROM articles      LEFT JOIN comments       ON articles.article_id = $1`
+    )
+    .then(({ rows: commentCount }) => {
+      return commentCount;
+    });
+};
+
+exports.deleteCommentById = (id) => {
+  return db
+    .query("DELETE FROM comments WHERE comment_id = $1 RETURNING *; ", [
+      id,
+    ])
+    .then((deleted) => {
+      if (deleted.rows.length === 0) {
+        return Promise.reject({
+          status: 404,
+          message: "Not Found",
+        });
+      }
     });
 };

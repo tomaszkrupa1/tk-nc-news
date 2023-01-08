@@ -500,3 +500,53 @@ describe("8. GET /api/articles (queries)", () => {
     });
   });
 });
+
+describe("9. GET /api/articles/:article_id (Comment Count)", () => {
+  it("200: Should respond with an the commment count for the article id provided", () => {
+    const articleId = 5;
+    return request(app)
+      .get(`/api/articles/${articleId}`)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.article).toEqual(
+          expect.objectContaining({
+            article_id: expect.any(Number),
+            title: expect.any(String),
+            author: expect.any(String),
+            body: expect.any(String),
+            topic: expect.any(String),
+            created_at: expect.any(String),
+            votes: expect.any(Number),
+            comment_count: expect.any(Number),
+          })
+        );
+        expect(body.article.comment_count).toEqual(2);
+      });
+  });
+});
+
+describe("10. DELETE /api/comments/:comment_id", () => {
+  it("204: Should respond with with no content", () => {
+    return request(app).delete("/api/comments/2").expect(204);
+  });
+
+  it("404: Should return an error when endpoint id that does not exist", () => {
+    return request(app)
+      .delete("/api/comments/99999")
+      .expect(404)
+      .then((res) => {
+        const body = res.body;
+        expect(body).toEqual({ message: "Not Found" });
+      });
+  });
+
+  it("400: Should return an error when endpoint provided is an id that is the wrong data type", () => {
+    return request(app)
+      .delete("/api/comments/thisisthewrongdatatype")
+      .expect(400)
+      .then((res) => {
+        const body = res.body;
+        expect(body).toEqual({ message: "Bad Request" });
+      });
+  });
+});

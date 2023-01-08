@@ -152,9 +152,7 @@ exports.selectCommentCountByArticleId = () => {
 
 exports.deleteCommentById = (id) => {
   return db
-    .query("DELETE FROM comments WHERE comment_id = $1 RETURNING *; ", [
-      id,
-    ])
+    .query("DELETE FROM comments WHERE comment_id = $1 RETURNING *; ", [id])
     .then((deleted) => {
       if (deleted.rows.length === 0) {
         return Promise.reject({

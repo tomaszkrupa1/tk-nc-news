@@ -9,6 +9,8 @@ const {
   deleteCommentById,
 } = require("../models/model.js");
 
+const endpointsJSON = require("../endpoints.json");
+
 exports.getTopics = (req, res) => {
   selectTopics().then((topics) => {
     res.status(200).send({ topics });
@@ -84,4 +86,8 @@ exports.removeCommentById = (req, res, next) => {
       res.status(204).send();
     })
     .catch(next);
+};
+
+exports.getEndpointJSON = (req, res, next) => {
+  res.status(200).send(endpointsJSON);
 };

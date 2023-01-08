@@ -550,3 +550,9 @@ describe("10. DELETE /api/comments/:comment_id", () => {
       });
   });
 });
+
+describe("12. GET /api", () => {
+  it("200: Should respond with a JSON listing all the endpoints", () => {
+    return request(app).get("/api").expect(200);
+  });
+});

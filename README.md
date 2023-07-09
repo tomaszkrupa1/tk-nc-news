@@ -4,9 +4,9 @@ An API with user posts and data for a future frontend P2P forum website project
 
 ## To View This Project
 
-![here](https://tk-news.onrender.com/)
+[here](https://tk-news.onrender.com/)
 
-URL: ![www.tk-news.onrender.com/](https://tk-news.onrender.com/)
+URL: [www.tk-news.onrender.com/](https://tk-news.onrender.com/)
 
 To view locally clone or download repository then navigate into directory where it is saved and follow below steps..
 

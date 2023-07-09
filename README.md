@@ -25,8 +25,6 @@ Within these files insert the following
 
 the database names can be found in **./db/setup.sql**
 
----
-
 ### `npm install`
 
 Install required packages.
@@ -35,12 +33,40 @@ Install required packages.
 
 To run the API locally
 
-## API
+## API Endpoints
 
-## Conclusion
+### `GET /api`
 
-### Why I built this project this way?
+Responds with a json representation of all the available endpoints of the api with additional information on each
 
-### I gained confidence...
+### `GET /api/topics`
 
-### If we had more time...
+Responds with an array of all topics
+
+### `GET /api/articles`
+
+Responds with an array of all articles
+
+### `GET /api/articles/:article_id`
+
+Responds with the article object with the corresponding article id
+
+### `GET /api/articles/:article_id/comments`
+
+Responds with the comments from a specific article
+
+### `GET /api/users`
+
+Responds with an array of all users
+
+### `POST /api/articles/:article_id/comments`
+
+Inserts the comment provided into the database and responds with the inserted comment
+
+### `PATCH /api/articles/:article_id`
+
+Adds the number of votes provided in the body to the specified article
+
+### `DELETE /api/comments/:comment_id`
+
+Deletes the specified comment and responds with no content

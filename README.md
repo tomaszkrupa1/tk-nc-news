@@ -4,7 +4,7 @@ An API with user posts and data for a future frontend P2P forum website project
 
 ## To View This Project
 
-[here](https://tk-news.onrender.com/)
+Live API available [here](https://tk-news.onrender.com/)
 
 URL: [www.tk-news.onrender.com/](https://tk-news.onrender.com/)
 

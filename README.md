@@ -21,9 +21,9 @@ In order to set up the environment, the cloned user will need to set up two file
 
 Within these files insert the following
 
-**PGDATABASE=<database_name_here>**
+### `PGDATABASE=<database_name_here>`
 
-the database names can be found in ./db/setup.sql
+the database names can be found in **./db/setup.sql**
 
 ---
 
@@ -31,15 +31,9 @@ the database names can be found in ./db/setup.sql
 
 Install required packages.
 
-### `npm start`
+### `npm run seed `
 
-Runs the app in the development mode.
-
-Use Expo to display on mobile device using the QR code.
-
-Alternatively to run on web use...
-
-### `npm run custom`
+To run the API locally
 
 ## API
 
